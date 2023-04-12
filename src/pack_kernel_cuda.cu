@@ -76,7 +76,7 @@ const int depth)
     #define CALL_PACK(dev_ptr, type, face, dir)\
 	{\
         const int launch_sz = (ceil((dir##_max+4+type.dir##_extra)/static_cast<float>(BLOCK_SZ))) * depth; \
-        hipLaunchKernelGGL(device_pack##face##Buffer, launch_sz, BLOCK_SZ, \
+        hipLaunchKernelGGL(device_pack##face##Buffer, dim3(launch_sz), dim3(BLOCK_SZ), \
                            0, 0, x_min, x_max, y_min, y_max, type, \
                            dev_ptr, dev_##face##_send_buffer, depth); \
         CUDA_ERR_CHECK; \
@@ -145,7 +145,7 @@ const int depth)
         CUDA_ERR_CHECK; \
         hipDeviceSynchronize();\
         const int launch_sz = (ceil((dir##_max+4+type.dir##_extra)/static_cast<float>(BLOCK_SZ))) * depth; \
-        hipLaunchKernelGGL(device_unpack##face##Buffer, launch_sz, BLOCK_SZ, \
+        hipLaunchKernelGGL(device_unpack##face##Buffer, dim3(launch_sz), dim3(BLOCK_SZ), \
                            0, 0, x_min, x_max, y_min, y_max, type, \
                            dev_ptr, dev_##face##_recv_buffer, depth); \
         CUDA_ERR_CHECK; \

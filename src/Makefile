@@ -81,6 +81,7 @@ MPI_COMPILER=ftn
 C_MPI_COMPILER=cc
 CXX_MPI_COMPILER=CC
 HIP_COMPILER=hipcc
+#HIP_COMPILER=CC
 
 #HIP_FLAGS+=-D MANUALLY_CHOOSE_GPU
 
@@ -101,7 +102,7 @@ LDFLAGS+=-L${CRAY_MPICH_PREFIX}/lib -lmpi #hipcc
 ifdef DEBUG
 HIP_FLAGS+=-O0 -g -G
 else
-HIP_FLAGS+=-O3
+HIP_FLAGS+=-O2
 endif
 
 C_FILES=\
@@ -201,7 +202,7 @@ clover_leaf: Makefile $(FORTRAN_FILES) $(C_FILES) $(CUDA_FILES)
 include make.deps
 
 %.o: %.cu Makefile make.deps
-	nvcc $(HIP_FLAGS) -c $< -o $*.o
+	$(HIP_COMPILER) $(HIP_FLAGS) -c $< -o $*.o
 %.mod %_module.mod %_leaf_module.mod: %.f90 %.o
 	@true
 %.o: %.f90 Makefile make.deps

@@ -27,40 +27,40 @@ static const char* errorCodes
         case hipErrorInvalidSymbol: return "hipErrorInvalidSymbol";// 13
         case hipErrorMapFailed: return "hipErrorMapFailed";// 14
         case hipErrorUnmapFailed: return "hipErrorUnmapFailed";// 15
-        case cudaErrorInvalidHostPointer: return "cudaErrorInvalidHostPointer";// 16
+//        case cudaErrorInvalidHostPointer: return "cudaErrorInvalidHostPointer";// 16
         case hipErrorInvalidDevicePointer: return "hipErrorInvalidDevicePointer";// 17
-        case cudaErrorInvalidTexture: return "cudaErrorInvalidTexture";// 18
-        case cudaErrorInvalidTextureBinding: return "cudaErrorInvalidTextureBinding";// 19
-        case cudaErrorInvalidChannelDescriptor: return "cudaErrorInvalidChannelDescriptor";// 20
+//        case cudaErrorInvalidTexture: return "cudaErrorInvalidTexture";// 18
+//        case cudaErrorInvalidTextureBinding: return "cudaErrorInvalidTextureBinding";// 19
+//        case cudaErrorInvalidChannelDescriptor: return "cudaErrorInvalidChannelDescriptor";// 20
         case hipErrorInvalidMemcpyDirection: return "hipErrorInvalidMemcpyDirection";// 21
-        case cudaErrorAddressOfConstant: return "cudaErrorAddressOfConstant";// 22
-        case cudaErrorTextureFetchFailed: return "cudaErrorTextureFetchFailed";// 23
-        case cudaErrorTextureNotBound: return "cudaErrorTextureNotBound";// 24
-        case cudaErrorSynchronizationError: return "cudaErrorSynchronizationError";// 25
-        case cudaErrorInvalidFilterSetting: return "cudaErrorInvalidFilterSetting";// 26
-        case cudaErrorInvalidNormSetting: return "cudaErrorInvalidNormSetting";// 27
-        case cudaErrorMixedDeviceExecution: return "cudaErrorMixedDeviceExecution";// 28
+//        case cudaErrorAddressOfConstant: return "cudaErrorAddressOfConstant";// 22
+//        case cudaErrorTextureFetchFailed: return "cudaErrorTextureFetchFailed";// 23
+//        case cudaErrorTextureNotBound: return "cudaErrorTextureNotBound";// 24
+//        case cudaErrorSynchronizationError: return "cudaErrorSynchronizationError";// 25
+//        case cudaErrorInvalidFilterSetting: return "cudaErrorInvalidFilterSetting";// 26
+//        case cudaErrorInvalidNormSetting: return "cudaErrorInvalidNormSetting";// 27
+//        case cudaErrorMixedDeviceExecution: return "cudaErrorMixedDeviceExecution";// 28
         case hipErrorDeinitialized: return "hipErrorDeinitialized";// 29
         case hipErrorUnknown: return "hipErrorUnknown";// 30
-        case cudaErrorNotYetImplemented: return "cudaErrorNotYetImplemented";// 31
-        case cudaErrorMemoryValueTooLarge: return "cudaErrorMemoryValueTooLarge";// 32
+//        case cudaErrorNotYetImplemented: return "cudaErrorNotYetImplemented";// 31
+//        case cudaErrorMemoryValueTooLarge: return "cudaErrorMemoryValueTooLarge";// 32
         case hipErrorInvalidHandle: return "hipErrorInvalidHandle";// 33
         case hipErrorNotReady: return "hipErrorNotReady";// 34
         case hipErrorInsufficientDriver: return "hipErrorInsufficientDriver";// 35
         case hipErrorSetOnActiveProcess: return "hipErrorSetOnActiveProcess";// 36
-        case cudaErrorInvalidSurface: return "cudaErrorInvalidSurface";// 37
+//        case cudaErrorInvalidSurface: return "cudaErrorInvalidSurface";// 37
         case hipErrorNoDevice: return "hipErrorNoDevice";// 38
         case hipErrorECCNotCorrectable: return "hipErrorECCNotCorrectable";// 39
         case hipErrorSharedObjectSymbolNotFound: return "hipErrorSharedObjectSymbolNotFound";// 40
         case hipErrorSharedObjectInitFailed: return "hipErrorSharedObjectInitFailed";// 41
         case hipErrorUnsupportedLimit: return "hipErrorUnsupportedLimit";// 42
-        case cudaErrorDuplicateVariableName: return "cudaErrorDuplicateVariableName";// 43
-        case cudaErrorDuplicateTextureName: return "cudaErrorDuplicateTextureName";// 44
-        case cudaErrorDuplicateSurfaceName: return "cudaErrorDuplicateSurfaceName";// 45
-        case cudaErrorDevicesUnavailable: return "cudaErrorDevicesUnavailable";// 46
+//        case cudaErrorDuplicateVariableName: return "cudaErrorDuplicateVariableName";// 43
+//        case cudaErrorDuplicateTextureName: return "cudaErrorDuplicateTextureName";// 44
+//        case cudaErrorDuplicateSurfaceName: return "cudaErrorDuplicateSurfaceName";// 45
+//        case cudaErrorDevicesUnavailable: return "cudaErrorDevicesUnavailable";// 46
         case hipErrorInvalidImage: return "hipErrorInvalidImage";// 47
         case hipErrorNoBinaryForGpu: return "hipErrorNoBinaryForGpu";// 48
-        case cudaErrorIncompatibleDriverContext: return "cudaErrorIncompatibleDriverContext";// 49
+//        case cudaErrorIncompatibleDriverContext: return "cudaErrorIncompatibleDriverContext";// 49
         case hipErrorPeerAccessAlreadyEnabled: return "hipErrorPeerAccessAlreadyEnabled";// 50
         case hipErrorPeerAccessNotEnabled: return "hipErrorPeerAccessNotEnabled";// 51
         case hipErrorContextAlreadyInUse: return "hipErrorContextAlreadyInUse";// 52
@@ -69,12 +69,12 @@ static const char* errorCodes
         case hipErrorProfilerAlreadyStarted: return "hipErrorProfilerAlreadyStarted";// 55
         case hipErrorProfilerAlreadyStopped: return "hipErrorProfilerAlreadyStopped";// 56
         case hipErrorAssert: return "hipErrorAssert";// 57
-        case cudaErrorTooManyPeers: return "cudaErrorTooManyPeers";// 58
+//        case cudaErrorTooManyPeers: return "cudaErrorTooManyPeers";// 58
         case hipErrorHostMemoryAlreadyRegistered: return "hipErrorHostMemoryAlreadyRegistered";// 59
         case hipErrorHostMemoryNotRegistered: return "hipErrorHostMemoryNotRegistered";// 60
         case hipErrorOperatingSystem: return "hipErrorOperatingSystem";// 61
-        case cudaErrorStartupFailure: return "cudaErrorStartupFailure";// 62
-        case cudaErrorApiFailureBase: return "cudaErrorApiFailureBase";// 63
+//        case cudaErrorStartupFailure: return "cudaErrorStartupFailure";// 62
+//        case cudaErrorApiFailureBase: return "cudaErrorApiFailureBase";// 63
         default: return "Unknown error";
     }
 }
