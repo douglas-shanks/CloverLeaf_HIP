@@ -25,6 +25,7 @@
 #ifndef __CUDA_COMMON_INC
 #define __CUDA_COMMON_INC
 
+#include "hip/hip_runtime.h"
 #include <iostream>
 #include <string>
 #include <stdexcept>
@@ -93,20 +94,27 @@
 /*******************/
 
 // enormous ugly macro that profiles kernels + checks if there were any errors
+
+/*
+funcname<<<num_blocks, BLOCK_SZ>>>(x_min, x_max, y_min, y_max, __VA_ARGS__); \
+*/
+
+
 #define CUDALAUNCH(funcname, ...)                               \
     if (profiler_on)                                            \
     {                                                           \
-        cudaEventCreate(&_t0);                                  \
-        cudaEventRecord(_t0);                                   \
+        hipEventCreate(&_t0);                                  \
+        hipEventRecord(_t0);                                   \
     }                                                           \
-    funcname<<<num_blocks, BLOCK_SZ>>>(x_min, x_max, y_min, y_max, __VA_ARGS__); \
+    hipLaunchKernelGGL(funcname, num_blocks,BLOCK_SZ,0,0, \
+		   x_min, x_max, y_min, y_max, __VA_ARGS__ ); \
     CUDA_ERR_CHECK;                                             \
     if (profiler_on)                                            \
     {                                                           \
-        cudaEventCreate(&_t1);                                  \
-        cudaEventRecord(_t1);                                   \
-        cudaEventSynchronize(_t1);                              \
-        cudaEventElapsedTime(&taken, _t0, _t1);                 \
+        hipEventCreate(&_t1);                                  \
+        hipEventRecord(_t1);                                   \
+        hipEventSynchronize(_t1);                              \
+        hipEventElapsedTime(&taken, _t0, _t1);                 \
         std::string func_name(#funcname);                       \
         if (kernel_times.end() != kernel_times.find(func_name)) \
         {                                                       \
@@ -228,7 +236,7 @@ private:
     std::map<std::string, double> kernel_times;
     // events used for timing
     float taken;
-    cudaEvent_t _t0, _t1;
+    hipEvent_t _t0, _t1;
 
     // mpi packing
     #define PACK_ARGS                                       \

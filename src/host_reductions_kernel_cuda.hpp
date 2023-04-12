@@ -1,6 +1,7 @@
 #ifndef __HOST_REDUCTIONS_KERNEL_CUDA_INC
 #define __HOST_REDUCTIONS_KERNEL_CUDA_INC
 
+#include "hip/hip_runtime.h"
 #include "cuda_common.hpp"
 #include "kernel_files/reductions_kernel.cuknl"
 
@@ -17,19 +18,25 @@ private:
             switch(reduction_type)
             {
                 case RED_SUM:
-                    reduction<T, RED_SUM><<<num_blocks, BLOCK_SZ>>>(len, buffer);
+			hipLaunchKernelGGL(reduction<T, RED_SUM>,num_blocks,BLOCK_SZ,
+					0,0,len, buffer);
+//                    reduction<T, RED_SUM><<<num_blocks, BLOCK_SZ>>>(len, buffer);
                 break;
                 case RED_MAX:
-                    reduction<T, RED_MAX><<<num_blocks, BLOCK_SZ>>>(len, buffer);
+		        hipLaunchKernelGGL(reduction<T, RED_MAX>,num_blocks,BLOCK_SZ,
+                                        0,0,len, buffer);
+//                    reduction<T, RED_MAX><<<num_blocks, BLOCK_SZ>>>(len, buffer);
                 break;
                 case RED_MIN:
-                    reduction<T, RED_MIN><<<num_blocks, BLOCK_SZ>>>(len, buffer);
+		        hipLaunchKernelGGL(reduction<T, RED_MIN>,num_blocks,BLOCK_SZ,
+                                        0,0,len, buffer);
+//                    reduction<T, RED_MIN><<<num_blocks, BLOCK_SZ>>>(len, buffer);
                 break;
             }
             len = num_blocks;
         }
         CUDA_ERR_CHECK;
-        cudaMemcpy(result, buffer, sizeof(T), cudaMemcpyDeviceToHost);
+        hipMemcpy(result, buffer, sizeof(T), hipMemcpyDeviceToHost);
     }
 
 public:

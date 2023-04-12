@@ -24,10 +24,6 @@ ifndef COMPILER
   MESSAGE=select a compiler to compile in OpenMP, e.g. make COMPILER=INTEL
 endif
 
-ifndef NV_ARCH
-  MESSAGE=select an NVIDA device to compile in CUDA, e.g. make NV_ARCH=KEPLER
-endif
-
 OMP_INTEL     = -openmp
 OMP_SUN       = -xopenmp=parallel -vpara
 OMP_GNU       = -fopenmp
@@ -40,7 +36,7 @@ OMP=$(OMP_$(COMPILER))
 FLAGS_INTEL     = -O3 -ipo
 FLAGS_SUN       = -O2
 FLAGS_GNU       = -O2
-FLAGS_CRAY      = -O2 -em -ra -f free -F
+FLAGS_CRAY      = -h omp -em -ra -f free -F
 FLAGS_PGI       = -O2 -Mpreprocess
 FLAGS_PATHSCALE = -O2
 FLAGS_XLF       = -O2
@@ -79,39 +75,33 @@ ifdef IEEE
   I3E=$(I3E_$(COMPILER))
 endif
 
-# flags for nvcc
-# set NV_ARCH to select the correct one
-NV_ARCH=KEPLER
-CODE_GEN_FERMI=-gencode arch=compute_20,code=sm_21
-CODE_GEN_KEPLER=-gencode arch=compute_35,code=sm_35
-CODE_GEN_KEPLER_CONSUMER=-gencode arch=compute_30,code=sm_30
-CODE_GEN_MAXWELL=-gencode arch=compute_50,code=sm_50
-CODE_GEN_PASCAL=-gencode arch=compute_60,code=sm_60
-CODE_GEN_VOLTA=-gencode arch=compute_70,code=sm_70
-CODE_GEN_AMPERE=-gencode arch=compute_80,code=sm_80
-
-LDLIBS+=-lstdc++ -lcudart
-
 FLAGS=$(FLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS)
 CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) -c
-MPI_COMPILER=mpif90
-C_MPI_COMPILER=mpicc
+MPI_COMPILER=ftn
+C_MPI_COMPILER=cc
+CXX_MPI_COMPILER=CC
+HIP_COMPILER=hipcc
 
-NV_FLAGS+=-D MANUALLY_CHOOSE_GPU
+#HIP_FLAGS+=-D MANUALLY_CHOOSE_GPU
 
-# requires CUDA_HOME to be set - not the same on all machines
-NV_FLAGS=-I$(CUDA_HOME)/include $(CODE_GEN_$(NV_ARCH)) -restrict -Xcompiler "$(CFLAGS_GNU)" -D MPI_HDR $(NV_OPTIONS)
-NV_FLAGS+=-D NO_ERR_CHK
+
+# ROCM_PATH and CRAY_MPICH_PREFIX should be picked up from environment
+# We are defaulting here to AMD Mi250X (gfx90a)
+
+#HIP_FLAGS= -std=c++11 -D__HIP_ARCH_GFX90A__=1 --rocm-path=${ROCM_PATH} --offload-arch=gfx90a -x hip -I${ROCM_PATH}/include #CCE
+HIP_FLAGS= --amdgpu-target=gfx90a -I${CRAY_MPICH_PREFIX}/include #hipcc
+HIP_FLAGS+= -D NO_ERR_CHK
 libdir.x86_64 = lib64
 libdir.i686   = lib
 MACHINE := $(shell uname -m)
 libdir = $(libdir.$(MACHINE))
-LDFLAGS+=-L$(CUDA_HOME)/$(libdir)
+#LDFLAGS+= -std=c++11 --rocm-path=${ROCM_PATH} -L${ROCM_PATH}/lib -lamdhip64  #CCE
+LDFLAGS+=-L${CRAY_MPICH_PREFIX}/lib -lmpi #hipcc
 
 ifdef DEBUG
-NV_FLAGS+=-O0 -g -G
+HIP_FLAGS+=-O0 -g -G
 else
-NV_FLAGS+=-O3
+HIP_FLAGS+=-O3
 endif
 
 C_FILES=\
@@ -211,7 +201,7 @@ clover_leaf: Makefile $(FORTRAN_FILES) $(C_FILES) $(CUDA_FILES)
 include make.deps
 
 %.o: %.cu Makefile make.deps
-	nvcc $(NV_FLAGS) -c $< -o $*.o
+	nvcc $(HIP_FLAGS) -c $< -o $*.o
 %.mod %_module.mod %_leaf_module.mod: %.f90 %.o
 	@true
 %.o: %.f90 Makefile make.deps

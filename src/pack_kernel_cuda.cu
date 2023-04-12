@@ -22,6 +22,7 @@
  *  @details Transfers the buffers required for the mpi halo exchange
  */
 
+#include "hip/hip_runtime.h"
 #include "cuda_common.hpp"
 #include "kernel_files/pack_kernel.cuknl"
 
@@ -63,16 +64,24 @@ const int which_side,
 double* buffer,
 const int buffer_size,
 const int depth)
+
+
+/*
+           device_pack##face##Buffer<<< launch_sz, BLOCK_SZ >>> \
+        (x_min, x_max, y_min, y_max, type, \
+        dev_ptr, dev_##face##_send_buffer, depth); \
+
+*/   
 {
     #define CALL_PACK(dev_ptr, type, face, dir)\
 	{\
         const int launch_sz = (ceil((dir##_max+4+type.dir##_extra)/static_cast<float>(BLOCK_SZ))) * depth; \
-        device_pack##face##Buffer<<< launch_sz, BLOCK_SZ >>> \
-        (x_min, x_max, y_min, y_max, type, \
-        dev_ptr, dev_##face##_send_buffer, depth); \
+        hipLaunchKernelGGL(device_pack##face##Buffer, launch_sz, BLOCK_SZ, \
+                           0, 0, x_min, x_max, y_min, y_max, type, \
+                           dev_ptr, dev_##face##_send_buffer, depth); \
         CUDA_ERR_CHECK; \
-        cudaDeviceSynchronize();\
-        cudaMemcpy(buffer, dev_##face##_send_buffer, buffer_size*sizeof(double), cudaMemcpyDeviceToHost); \
+        hipDeviceSynchronize();\
+        hipMemcpy(buffer, dev_##face##_send_buffer, buffer_size*sizeof(double), hipMemcpyDeviceToHost); \
         CUDA_ERR_CHECK; \
         break; \
 	}
@@ -122,16 +131,23 @@ const int which_side,
 double* buffer,
 const int buffer_size,
 const int depth)
+
+/*
+           device_unpack##face##Buffer<<< launch_sz, BLOCK_SZ >>> \
+        (x_min, x_max, y_min, y_max, type, \
+        dev_ptr, dev_##face##_recv_buffer, depth); \
+
+*/   
 {
     #define CALL_UNPACK(dev_ptr, type, face, dir)\
 	{ \
-        cudaMemcpy(dev_##face##_recv_buffer, buffer, buffer_size*sizeof(double), cudaMemcpyHostToDevice); \
+        hipMemcpy(dev_##face##_recv_buffer, buffer, buffer_size*sizeof(double), hipMemcpyHostToDevice); \
         CUDA_ERR_CHECK; \
-        cudaDeviceSynchronize();\
+        hipDeviceSynchronize();\
         const int launch_sz = (ceil((dir##_max+4+type.dir##_extra)/static_cast<float>(BLOCK_SZ))) * depth; \
-        device_unpack##face##Buffer<<< launch_sz, BLOCK_SZ >>> \
-        (x_min, x_max, y_min, y_max, type, \
-        dev_ptr, dev_##face##_recv_buffer, depth); \
+        hipLaunchKernelGGL(device_unpack##face##Buffer, launch_sz, BLOCK_SZ, \
+                           0, 0, x_min, x_max, y_min, y_max, type, \
+                           dev_ptr, dev_##face##_recv_buffer, depth); \
         CUDA_ERR_CHECK; \
         break; \
 	}
@@ -211,7 +227,7 @@ int CloverleafCudaChunk::getBufferSize
 #define CHECK_PACK(op, side1, side2)                            \
     if (external_face != chunk_1 || external_face != chunk_2)   \
     {                                                           \
-        cudaDeviceSynchronize();                                \
+        hipDeviceSynchronize();                                \
     }                                                           \
     if (external_face != chunk_1)                               \
     {                                                           \
@@ -231,7 +247,7 @@ int CloverleafCudaChunk::getBufferSize
     }                                                           \
     if (external_face != chunk_1 || external_face != chunk_2)   \
     {                                                           \
-        cudaDeviceSynchronize();                                \
+        hipDeviceSynchronize();                                \
     }
 
 void CloverleafCudaChunk::pack_left_right
