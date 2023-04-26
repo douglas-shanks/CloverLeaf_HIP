@@ -56,6 +56,7 @@ const double* __restrict const yvel0,
     }
 
     __syncthreads();
+
     for (int offset = BLOCK_SZ / 2; offset > 0; offset /= 2)
     {
         if (lid < offset)

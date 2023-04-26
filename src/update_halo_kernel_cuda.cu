@@ -52,13 +52,12 @@ int depth)
             hipEventCreate(&_t0);                                      \
             hipEventRecord(_t0);                                       \
         }                                                               \
-        const int launch_sz = (ceil((dir##_max+5+grid_type.dir##_extra) \
-            /static_cast<float>(BLOCK_SZ))) * depth;                    \
-        hipLaunchKernelGGL( device_update_halo_kernel_##face##_cuda, \
-			    dim3(launch_sz), dim3(BLOCK_SZ), 0, 0,               \
+	    const int launch_sz = (ceil((dir##_max+5+grid_type.dir##_extra)/static_cast<double>(BLOCK_SZ))) * depth;\
+	    hipLaunchKernelGGL(device_update_halo_kernel_##face##_cuda, \
+                            launch_sz, BLOCK_SZ, 0, 0,        \
                             x_min, x_max, y_min, y_max,\
-			    grid_type, cur_array_d, depth);          \
-        CUDA_ERR_CHECK;                                                 \
+                            grid_type, cur_array_d, depth);\
+	    CUDA_ERR_CHECK;\
         if (profiler_on)                                                \
         {                                                               \
             hipEventCreate(&_t1);                                      \
@@ -76,8 +75,17 @@ int depth)
             }                                                           \
         }                                                               \
     }
-//        <<<launch_sz, BLOCK_SZ >>>                                      \
-//            (x_min, x_max, y_min, y_max, grid_type, cur_array_d, depth);\
+/*
+   hipLaunchKernelGGL( HIP_KERNEL_NAME(device_update_halo_kernel_##face##_cuda), \
+                            launch_sz, BLOCK_SZ, 0, 0,               \
+                            x_min, x_max, y_min, y_max,\
+                            grid_type, cur_array_d, depth);
+
+        device_update_halo_kernel_##face##_cuda<<<launch_sz, BLOCK_SZ >>>\
+            (x_min, x_max, y_min, y_max, \
+             grid_type, cur_array_d, depth);\
+			    
+*/   
 	
     CHECK_LAUNCH(bottom, x);
     CHECK_LAUNCH(top, x);

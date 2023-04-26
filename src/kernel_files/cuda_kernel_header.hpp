@@ -56,11 +56,12 @@ public:
     __device__ inline static void run
     (T* array, T* out, T(*func)(T, T))
     {
-        // only need to synch if not working within a warp
-        if (offset > 16)
-        {
+        // only need to sync if not working within a warp
+	// Use warpSize variable?
+        //if (offset > 16)
+        //{
             __syncthreads();
-        }
+        //}
 
         // only continue if it's in the lower half
         if (threadIdx.x < offset)
@@ -78,6 +79,7 @@ public:
     __device__ inline static void run
     (T* array, T* out, T(*func)(T, T))
     {
+	__syncthreads();
         out[blockIdx.x] = array[0];
     }
 };

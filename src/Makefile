@@ -44,7 +44,7 @@ FLAGS_          = -O2
 CFLAGS_INTEL     = -O3 -ipo -restrict -fno-alias
 CFLAGS_SUN       = -O2
 CFLAGS_GNU       = -O2
-CFLAGS_CRAY      = -em
+CFLAGS_CRAY      = -fopenmp
 CFLAGS_PGI       = -O2
 CFLAGS_PATHSCALE = -O2
 CFLAGS_XLF       = -O2
@@ -83,26 +83,27 @@ CXX_MPI_COMPILER=CC
 HIP_COMPILER=hipcc
 #HIP_COMPILER=CC
 
-#HIP_FLAGS+=-D MANUALLY_CHOOSE_GPU
-
+#ifdef MANUALLY_CHOOSE_GPU
+#HIP_FLAGS+= -D MANUALLY_CHOOSE_GPU
+#endif
 
 # ROCM_PATH and CRAY_MPICH_PREFIX should be picked up from environment
 # We are defaulting here to AMD Mi250X (gfx90a)
 
 #HIP_FLAGS= -std=c++11 -D__HIP_ARCH_GFX90A__=1 --rocm-path=${ROCM_PATH} --offload-arch=gfx90a -x hip -I${ROCM_PATH}/include #CCE
-HIP_FLAGS= --amdgpu-target=gfx90a -I${CRAY_MPICH_PREFIX}/include #hipcc
+HIP_FLAGS= -std=c++11 --amdgpu-target=gfx90a -I${CRAY_MPICH_PREFIX}/include #hipcc
 HIP_FLAGS+= -D NO_ERR_CHK
 libdir.x86_64 = lib64
 libdir.i686   = lib
 MACHINE := $(shell uname -m)
 libdir = $(libdir.$(MACHINE))
-#LDFLAGS+= -std=c++11 --rocm-path=${ROCM_PATH} -L${ROCM_PATH}/lib -lamdhip64  #CCE
-LDFLAGS+=-L${CRAY_MPICH_PREFIX}/lib -lmpi #hipcc
+#LDFLAGS+= -L${ROCM_PATH}/lib -lamdhip64  #--rocm-path=${ROCM_PATH} CCE
+LDFLAGS+= -L${CRAY_MPICH_PREFIX}/lib -lmpi -lamdhip64 #hipcc
 
 ifdef DEBUG
-HIP_FLAGS+=-O0 -g -G
+HIP_FLAGS+= -O0 -g -G
 else
-HIP_FLAGS+=-O2
+HIP_FLAGS+= -O3
 endif
 
 C_FILES=\
