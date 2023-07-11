@@ -110,8 +110,8 @@ funcname<<<num_blocks, BLOCK_SZ>>>(x_min, x_max, y_min, y_max, __VA_ARGS__); \
         hipEventCreate(&_t0);                                  \
         hipEventRecord(_t0);                                   \
     }                                                           \
-        hipLaunchKernelGGL(funcname, num_blocks, BLOCK_SZ, 0, 0, \
-                   x_min, x_max, y_min, y_max, __VA_ARGS__ ); \
+    hipLaunchKernelGGL(funcname, num_blocks, BLOCK_SZ, 0, 0,    \
+                   x_min, x_max, y_min, y_max, __VA_ARGS__ );   \
     CUDA_ERR_CHECK;                                             \
     if (profiler_on)                                            \
     {                                                           \

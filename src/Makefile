@@ -91,7 +91,7 @@ HIP_COMPILER=hipcc
 # We are defaulting here to AMD Mi250X (gfx90a)
 
 #HIP_FLAGS= -std=c++11 -D__HIP_ARCH_GFX90A__=1 --rocm-path=${ROCM_PATH} --offload-arch=gfx90a -x hip -I${ROCM_PATH}/include #CCE
-HIP_FLAGS= -std=c++11 --amdgpu-target=gfx90a -I${CRAY_MPICH_PREFIX}/include #hipcc
+HIP_FLAGS= -std=c++11 --offload-arch=gfx90a -I${CRAY_MPICH_PREFIX}/include  #hipcc
 HIP_FLAGS+= -D NO_ERR_CHK
 libdir.x86_64 = lib64
 libdir.i686   = lib

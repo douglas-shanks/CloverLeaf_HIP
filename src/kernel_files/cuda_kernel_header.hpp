@@ -4,7 +4,7 @@
 
 // size of workgroup/block - 256 seems to be optimal
 #ifndef BLOCK_SZ 
-    #define BLOCK_SZ 256
+    #define BLOCK_SZ 1024
 #endif
 
 // number of bytes to allocate for x size array
@@ -53,15 +53,13 @@ template < typename T, int offset >
 class Reduce
 {
 public:
-    __device__ inline static void run
-    (T* array, T* out, T(*func)(T, T))
+    __device__ inline static void run(T* array, T* out, T(*func)(T, T))
     {
         // only need to sync if not working within a warp
-	// Use warpSize variable?
-        //if (offset > 16)
-        //{
-            __syncthreads();
-        //}
+        if (offset > 16)
+        {
+	       	__syncthreads();
+        }
 
         // only continue if it's in the lower half
         if (threadIdx.x < offset)
@@ -76,10 +74,8 @@ template < typename T >
 class Reduce < T, 0 >
 {
 public:
-    __device__ inline static void run
-    (T* array, T* out, T(*func)(T, T))
+    __device__ inline static void run(T* array, T* out, T(*func)(T, T))
     {
-	__syncthreads();
         out[blockIdx.x] = array[0];
     }
 };
