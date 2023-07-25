@@ -1,6 +1,6 @@
 # CloverLeaf HIP
 
-A HIP port of the CloverLeaf mini-app starting from the current CUDA version on UK-MAC. This port used hipify-perl (https://github.com/ROCm-Developer-Tools/HIPIFY) to convert the CUDA kernels. Extra work was required for CUDA specific code (references to specific warpsizes relevant to NVidia hardware etc.).
+A HIP port of the CloverLeaf mini-app starting from the current CUDA version on UK-MAC. This port used hipify-perl (https://github.com/ROCm-Developer-Tools/HIPIFY) to convert the CUDA kernels. Extra work was required for CUDA specific code (references to specific warpsizes relevant to Nvidia hardware etc.).
 
 ## Compiling
 
